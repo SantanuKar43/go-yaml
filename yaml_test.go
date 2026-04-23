@@ -377,6 +377,18 @@ key: 1.5
 	}
 }
 
+func TestPrecisionLossWithStrictIntsForUints(t *testing.T) {
+	yml := `
+key: 1.5
+`
+	var v struct {
+		Key uint64
+	}
+	if err := yaml.UnmarshalWithOptions([]byte(yml), &v, yaml.StrictInts()); err == nil {
+		t.Fatal("expected error for lossy float->int conversion, got nil")
+	}
+}
+
 func TestScientificNotationWithStrictIntsAndPrecisionLoss(t *testing.T) {
 	yml := `
 key: "1.5e-4"
@@ -395,6 +407,18 @@ key: "1.5e+4"
 `
 	var v struct {
 		Key int32
+	}
+	if err := yaml.UnmarshalWithOptions([]byte(yml), &v, yaml.StrictInts()); err != nil {
+		t.Fatalf("unexpected error for conversion %v", err)
+	}
+}
+
+func TestScientificNotationWithStrictIntsForUints(t *testing.T) {
+	yml := `
+key: "1.5e+4"
+`
+	var v struct {
+		Key uint32
 	}
 	if err := yaml.UnmarshalWithOptions([]byte(yml), &v, yaml.StrictInts()); err != nil {
 		t.Fatalf("unexpected error for conversion %v", err)
