@@ -401,6 +401,18 @@ key: "1.5e-4"
 	}
 }
 
+func TestScientificNotationWithStrictIntsAndPrecisionLossForUints(t *testing.T) {
+	yml := `
+key: "1.5e-4"
+`
+	var v struct {
+		Key uint64
+	}
+	if err := yaml.UnmarshalWithOptions([]byte(yml), &v, yaml.StrictInts()); err == nil {
+		t.Fatal("expected error for lossy float->int conversion, got nil")
+	}
+}
+
 func TestScientificNotationWithStrictInts(t *testing.T) {
 	yml := `
 key: "1.5e+4"
